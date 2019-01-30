@@ -40,7 +40,7 @@ use Timber\Loader;
  */
 class Timber {
 
-  public static $version = '2.0.0';
+	public static $version = '2.0.0';
 	public static $locations;
 	public static $dirname = 'views';
 	public static $twig_cache = false;
@@ -587,7 +587,7 @@ class Timber {
 	/**
 	 * Fetch function.
 	 *
-	 * @todo In case this isn’t deprecated for 2.0.0, update filter hook name.
+	 * @deprecated 2.0.0, use `Timber::compile()` instead.
 	 *
 	 * @api
 	 * @param array|string $filenames  Name of the Twig file to render. If this is an array of files, Timber will
@@ -600,18 +600,24 @@ class Timber {
 	 * @return bool|string The returned output.
 	 */
 	public static function fetch( $filenames, $data = array(), $expires = false, $cache_mode = Loader::CACHE_USE_DEFAULT ) {
-		$output = self::compile($filenames, $data, $expires, $cache_mode, true);
+		Helper::deprecated( 'fetch', 'compile', '2.0.0' );
+
+		$output = self::compile( $filenames, $data, $expires, $cache_mode, true );
 
 		/**
 		 * Filters the compiled result before it is returned.
 		 *
-		 * @todo Maybe deprecate in 2.0?
+		 * @deprecated 2.0.0
 		 * @see \Timber\Timber::fetch()
 		 * @since 0.16.7
 		 *
 		 * @param string $output The compiled output.
 		 */
-		$output = apply_filters('timber_compile_result', $output);
+		$output = apply_filters_deprecated(
+			'timber_compile_result',
+			array( $output ),
+			'2.0.0'
+		);
 
 		return $output;
 	}
@@ -638,7 +644,7 @@ class Timber {
 	 * @return bool|string The echoed output.
 	 */
 	public static function render( $filenames, $data = array(), $expires = false, $cache_mode = Loader::CACHE_USE_DEFAULT ) {
-		$output = self::fetch($filenames, $data, $expires, $cache_mode);
+		$output = self::compile( $filenames, $data, $expires, $cache_mode, true );
 		echo $output;
 		return $output;
 	}
